@@ -255,7 +255,8 @@ class FFMPEG_AudioReader:
 
     def close(self):
         """Closes the reader, terminating the subprocess if is still alive."""
-        if self.proc:
+        # for some reason, AudioReader doesn't have the attribute proc here
+        if hasattr(self, "proc") and self.proc:
             if self.proc.poll() is None:
                 self.proc.terminate()
                 self.proc.stdout.close()

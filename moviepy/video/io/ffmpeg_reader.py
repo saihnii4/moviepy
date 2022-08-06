@@ -421,15 +421,34 @@ class FFmpegInfosParser:
                     self._current_input_file["streams"].append(self._current_stream)
 
                 # get input number, stream number, language and type
-                main_info_match = re.search(
-                    r"^Stream\s#(\d+):(\d+)[\[(]?(\w+)?[\])]?:\s(\w+):", line.lstrip()
-                )
-                (
-                    input_number,
-                    stream_number,
-                    language,
-                    stream_type,
-                ) = main_info_match.groups()
+
+                # below regex doesn't work nicely with ffmpeg so i'm applying a (very hacky)patch
+                # designed specifically for my machine, not guaranteed to work on others
+                if "und" in line:
+                    main_info_match = re.search(
+                        r"^Stream\s#(\d+):(\d+)[\[(]?(\w+)?[\])]\(([^\)]+)\)?:\s(\w+):", line.lstrip()
+                    )
+
+                    (
+                        input_number,
+                        stream_number,
+                        _,
+                        language,
+                        stream_type,
+                    ) = main_info_match.groups()
+                else:
+                    main_info_match = re.search(
+                        r"^Stream\s#(\d+):(\d+)[\[(]?(\w+)?[\])]?:\s(\w+):", line.lstrip()
+                    )
+
+                    (
+                        input_number,
+                        stream_number,
+                        language,
+                        stream_type,
+                    ) = main_info_match.groups()
+
+
                 input_number = int(input_number)
                 stream_number = int(stream_number)
                 stream_type_lower = stream_type.lower()
@@ -817,6 +836,7 @@ def ffmpeg_parse_infos(
         print(infos)
 
     try:
+        print(infos)
         return FFmpegInfosParser(
             infos,
             filename,

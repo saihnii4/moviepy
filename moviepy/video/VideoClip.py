@@ -1243,6 +1243,7 @@ class TextClip(ImageClip):
         transparent=True,
         remove_temp=True,
         print_cmd=False,
+        duration=None
     ):
 
         if text is not None:
@@ -1314,7 +1315,7 @@ class TextClip(ImageClip):
             )
             raise IOError(error)
 
-        ImageClip.__init__(self, tempfilename, transparent=transparent)
+        ImageClip.__init__(self, tempfilename, transparent=transparent, duration=duration)
         self.text = text
         self.color = color
         self.stroke_color = stroke_color
